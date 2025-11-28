@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Objetivo - Etapa 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/dashboard" class="text-2xl font-bold text-blue-600">
+                    📚 Planner de Estudos
+                </a>
+                <a href="/dashboard" class="text-gray-700 hover:text-blue-600">
+                    ← Voltar ao Dashboard
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-2xl">
+
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-blue-600">Etapa 1 de 4</span>
+                <span class="text-sm font-medium text-gray-600">25%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: 25%"></div>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Criar Novo Objetivo</h1>
+            <p class="text-gray-600">Defina o que você deseja estudar e até quando</p>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${erro}" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
+            <p class="font-medium" th:text="${erro}"></p>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form th:action="@{/objetivos/novo/etapa1}" method="post" class="space-y-6">
+
+                <!-- Tema Principal -->
+                <div>
+                    <label for="temaPrincipal" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tema Principal <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           id="temaPrincipal"
+                           name="temaPrincipal"
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           placeholder="Ex: Java Spring Boot, Matemática para Concursos, Inglês Intermediário"
+                           maxlength="200">
+                    <p class="text-xs text-gray-500 mt-1">
+                        Informe o tema ou assunto principal que você deseja estudar
+                    </p>
+                </div>
+
+                <!-- Data Limite -->
+                <div>
+                    <label for="dataLimite" class="block text-sm font-medium text-gray-700 mb-2">
+                        Data Limite <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date"
+                           id="dataLimite"
+                           name="dataLimite"
+                           required
+                           th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                    <p class="text-xs text-gray-500 mt-1">
+                        Até quando você precisa concluir este objetivo?
+                    </p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-between pt-4">
+                    <a href="/dashboard"
+                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg font-semibold">
+                        Próxima Etapa →
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Info Box -->
+        <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+            <div class="flex items-start">
+                <div class="text-2xl mr-3">💡</div>
+                <div>
+                    <h3 class="font-semibold text-blue-900 mb-1">Dica</h3>
+                    <p class="text-sm text-blue-800">
+                        Seja específico no tema. Quanto mais claro, melhores serão as sugestões da IA
+                        na próxima etapa!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Objetivo - Etapa 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/dashboard" class="text-2xl font-bold text-blue-600">
+                    📚 Planner de Estudos
+                </a>
+                <a href="/dashboard" class="text-gray-700 hover:text-blue-600">
+                    ← Voltar ao Dashboard
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-3xl">
+
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-blue-600">Etapa 4 de 4</span>
+                <span class="text-sm font-medium text-gray-600">100%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: 100%"></div>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Defina sua Rotina</h1>
+            <p class="text-gray-600">Configure quando e quanto você pode estudar</p>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${erro}" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
+            <p class="font-medium" th:text="${erro}"></p>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form th:action="@{/objetivos/novo/etapa4/{id}(id=${objetivo.id})}" method="post" id="formRotina">
+
+                <!-- Total de Horas Info -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 text-center">
+                    <p class="text-sm text-gray-600 mb-1">Você precisa estudar</p>
+                    <p class="text-3xl font-bold text-gray-900" th:text="${totalHoras} + ' horas'"></p>
+                    <p class="text-sm text-gray-600 mt-1">
+                        Até: <span th:text="${#temporals.format(objetivo.dataLimite, 'dd/MM/yyyy')}"></span>
+                    </p>
+                </div>
+
+                <!-- Horas por Dia -->
+                <div class="mb-6">
+                    <label for="horasPorDia" class="block text-sm font-medium text-gray-700 mb-2">
+                        Quantas horas por dia você pode estudar? <span class="text-red-500">*</span>
+                    </label>
+                    <input type="range"
+                           id="horasPorDia"
+                           name="horasPorDia"
+                           min="1"
+                           max="12"
+                           value="2"
+                           class="w-full"
+                           oninput="atualizarHoras(this.value); validarViabilidade()">
+                    <div class="flex justify-between text-sm text-gray-600 mt-2">
+                        <span>1h</span>
+                        <span id="horasDisplay" class="font-semibold text-blue-600">2 horas/dia</span>
+                        <span>12h</span>
+                    </div>
+                </div>
+
+                <!-- Dias da Semana -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        Quais dias da semana você pode estudar? <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-4 gap-3">
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="SEG" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Segunda</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="TER" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Terça</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="QUA" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Quarta</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="QUI" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Quinta</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="SEX" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Sexta</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="SAB" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Sábado</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                            <input type="checkbox" name="dias" value="DOM" class="dia-checkbox" onchange="validarViabilidade()">
+                            <span class="text-sm">Domingo</span>
+                        </label>
+                    </div>
+                    <input type="hidden" name="diasEstudo" id="diasEstudoHidden">
+                </div>
+
+                <!-- Resultado da Validação -->
+                <div id="validacaoResultado" class="mb-6 hidden">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-between pt-6 border-t">
+                    <a th:href="@{/objetivos/novo/etapa3/{id}(id=${objetivo.id})}"
+                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                        ← Voltar
+                    </a>
+                    <button type="submit"
+                            id="btnFinalizar"
+                            class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg font-semibold">
+                        Finalizar e Criar Cronograma
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </main>
+
+    <script th:inline="javascript">
+        const objetivoId = /*[[${objetivo.id}]]*/ 0;
+        let validacaoTimeout;
+
+        function atualizarHoras(valor) {
+            document.getElementById('horasDisplay').textContent = valor + ' hora' + (valor > 1 ? 's' : '') + '/dia';
+        }
+
+        function validarViabilidade() {
+            // Cancelar validação anterior se existir
+            clearTimeout(validacaoTimeout);
+
+            // Aguardar 500ms antes de validar (debounce)
+            validacaoTimeout = setTimeout(async () => {
+                const horasPorDia = document.getElementById('horasPorDia').value;
+                const checkboxes = document.querySelectorAll('.dia-checkbox:checked');
+
+                if (checkboxes.length === 0) {
+                    document.getElementById('validacaoResultado').classList.add('hidden');
+                    return;
+                }
+
+                const diasSelecionados = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+                // Atualizar campo hidden
+                document.getElementById('diasEstudoHidden').value = diasSelecionados;
+
+                try {
+                    const response = await fetch(`/objetivos/${objetivoId}/validar-viabilidade?horasPorDia=${horasPorDia}&diasEstudo=${diasSelecionados}`, {
+                        method: 'POST'
+                    });
+
+                    const resultado = await response.json();
+                    mostrarResultadoValidacao(resultado);
+
+                } catch (error) {
+                    console.error('Erro ao validar:', error);
+                }
+            }, 500);
+        }
+
+        function mostrarResultadoValidacao(resultado) {
+            const div = document.getElementById('validacaoResultado');
+            div.classList.remove('hidden');
+
+            if (resultado.viavel) {
+                div.innerHTML = `
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                        <div class="flex items-start">
+                            <div class="text-2xl mr-3">✅</div>
+                            <div>
+                                <h3 class="font-semibold text-green-900 mb-2">Rotina Viável!</h3>
+                                <div class="text-sm text-green-800 space-y-1">
+                                    <p>📊 Horas necessárias: <strong>${resultado.horasNecessarias}h</strong></p>
+                                    <p>✅ Horas disponíveis: <strong>${resultado.horasDisponiveis}h</strong></p>
+                                    <p>📅 Dias úteis: <strong>${resultado.diasUteis} dias</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('btnFinalizar').disabled = false;
+            } else {
+                div.innerHTML = `
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                        <div class="flex items-start">
+                            <div class="text-2xl mr-3">⚠️</div>
+                            <div>
+                                <h3 class="font-semibold text-red-900 mb-2">Tempo Insuficiente!</h3>
+                                <div class="text-sm text-red-800 space-y-1">
+                                    <p>📊 Horas necessárias: <strong>${resultado.horasNecessarias}h</strong></p>
+                                    <p>❌ Horas disponíveis: <strong>${resultado.horasDisponiveis}h</strong></p>
+                                    <p>⚠️ Faltam: <strong>${resultado.horasFaltando}h</strong></p>
+                                    <p class="mt-3">💡 <strong>Sugestões:</strong></p>
+                                    <ul class="list-disc list-inside">
+                                        <li>Aumente as horas por dia</li>
+                                        <li>Adicione mais dias de estudo</li>
+                                        <li>Ou volte e remova alguns mini-temas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('btnFinalizar').disabled = true;
+            }
+        }
+
+        // Validação ao submeter
+        document.getElementById('formRotina').addEventListener('submit', function(e) {
+            const checkboxes = document.querySelectorAll('.dia-checkbox:checked');
+            if (checkboxes.length === 0) {
+                e.preventDefault();
+                alert('Selecione pelo menos um dia da semana!');
+            }
+        });
+    </script>
+
+</body>
+</html>

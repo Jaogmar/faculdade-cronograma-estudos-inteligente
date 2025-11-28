@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle + ' - ' : ''} + 'Planner de Estudos'">Planner de Estudos</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Heroicons -->
+    <script src="https://unpkg.com/heroicons@2.0.18/outline/index.js" type="module"></script>
+
+    <!-- Custom CSS (se necessário) -->
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a th:href="@{/}" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
+                    📚 Planner de Estudos
+                </a>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Menu para usuários não autenticados -->
+                    <div sec:authorize="!isAuthenticated()" class="space-x-4">
+                        <a th:href="@{/login}"
+                           class="text-gray-700 hover:text-blue-600 font-medium transition">
+                            Entrar
+                        </a>
+                        <a th:href="@{/cadastro}"
+                           class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">
+                            Cadastrar
+                        </a>
+                    </div>
+
+                    <!-- Menu para usuários autenticados -->
+                    <div sec:authorize="isAuthenticated()" class="flex items-center space-x-4">
+                        <a th:href="@{/dashboard}"
+                           class="text-gray-700 hover:text-blue-600 font-medium transition">
+                            Dashboard
+                        </a>
+                        <a th:href="@{/calendario}"
+                           class="text-gray-700 hover:text-blue-600 font-medium transition">
+                            Calendário
+                        </a>
+                        <form th:action="@{/logout}" method="post" class="inline">
+                            <button type="submit"
+                                    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition shadow-md">
+                                Sair
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- Mensagens de erro/sucesso -->
+        <div th:if="${mensagemSucesso}"
+             class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-md">
+            <p class="font-medium" th:text="${mensagemSucesso}"></p>
+        </div>
+
+        <div th:if="${mensagemErro}"
+             class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg shadow-md">
+            <p class="font-medium" th:text="${mensagemErro}"></p>
+        </div>
+
+        <!-- Content Block -->
+        <div th:replace="${content}"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-600">
+            <p>&copy; 2025 Planner de Estudos - Sistema Integrado com Gemini IA</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript (global) -->
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

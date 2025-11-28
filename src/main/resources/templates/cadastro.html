@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Planner de Estudos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center px-4 py-8">
+
+    <div class="max-w-md w-full">
+        <!-- Logo/Titulo -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">📚 Planner de Estudos</h1>
+            <p class="text-gray-600">Crie sua conta gratuita</p>
+        </div>
+
+        <!-- Card de Cadastro -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+
+            <!-- Mensagem de Erro -->
+            <div th:if="${erro}" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
+                <p class="font-medium" th:text="${erro}"></p>
+            </div>
+
+            <!-- Formulário -->
+            <form th:action="@{/cadastro}" method="post" class="space-y-6" id="formCadastro">
+
+                <!-- Nome -->
+                <div>
+                    <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nome Completo
+                    </label>
+                    <input type="text"
+                           id="nome"
+                           name="nome"
+                           required
+                           minlength="3"
+                           maxlength="100"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           placeholder="João Silva">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           placeholder="seu@email.com">
+                </div>
+
+                <!-- Senha -->
+                <div>
+                    <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">
+                        Senha
+                    </label>
+                    <input type="password"
+                           id="senha"
+                           name="senha"
+                           required
+                           minlength="6"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           placeholder="••••••••">
+                    <p class="text-xs text-gray-500 mt-1">Mínimo de 6 caracteres</p>
+                </div>
+
+                <!-- Confirmar Senha -->
+                <div>
+                    <label for="confirmarSenha" class="block text-sm font-medium text-gray-700 mb-2">
+                        Confirmar Senha
+                    </label>
+                    <input type="password"
+                           id="confirmarSenha"
+                           name="confirmarSenha"
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           placeholder="••••••••">
+                    <p id="senhaErro" class="text-xs text-red-500 mt-1 hidden">As senhas não coincidem</p>
+                </div>
+
+                <!-- Botão de Cadastro -->
+                <button type="submit"
+                        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    Criar Conta
+                </button>
+
+            </form>
+
+            <!-- Link de Login -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    Já tem uma conta?
+                    <a th:href="@{/login}" class="text-blue-600 font-semibold hover:text-blue-700 transition">
+                        Faça login aqui
+                    </a>
+                </p>
+            </div>
+
+            <!-- Voltar -->
+            <div class="mt-4 text-center">
+                <a th:href="@{/}" class="text-gray-500 text-sm hover:text-gray-700 transition">
+                    ← Voltar para página inicial
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Validação de senha
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            const senhaErro = document.getElementById('senhaErro');
+
+            if (senha !== confirmarSenha) {
+                e.preventDefault();
+                senhaErro.classList.remove('hidden');
+                document.getElementById('confirmarSenha').classList.add('border-red-500');
+            }
+        });
+
+        // Remove erro ao digitar
+        document.getElementById('confirmarSenha').addEventListener('input', function() {
+            document.getElementById('senhaErro').classList.add('hidden');
+            this.classList.remove('border-red-500');
+        });
+    </script>
+
+</body>
+</html>

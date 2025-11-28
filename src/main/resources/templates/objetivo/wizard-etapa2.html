@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Objetivo - Etapa 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/dashboard" class="text-2xl font-bold text-blue-600">
+                    📚 Planner de Estudos
+                </a>
+                <a href="/dashboard" class="text-gray-700 hover:text-blue-600">
+                    ← Voltar ao Dashboard
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-blue-600">Etapa 2 de 4</span>
+                <span class="text-sm font-medium text-gray-600">50%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: 50%"></div>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Sugestões de Mini-Temas</h1>
+            <p class="text-gray-600">
+                Tema: <span class="font-semibold text-blue-600" th:text="${objetivo.temaPrincipal}"></span>
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="bg-white rounded-xl shadow-lg p-12 text-center">
+            <div class="text-6xl mb-4 animate-pulse">🤖</div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                IA Gemini está analisando...
+            </h3>
+            <p class="text-gray-600">
+                Aguarde enquanto geramos sugestões personalizadas de mini-temas para você
+            </p>
+            <div class="mt-6 flex justify-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        </div>
+
+        <!-- Mini-Temas List (oculto inicialmente) -->
+        <div id="miniTemasContainer" class="hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Selecione os Mini-Temas</h2>
+                    <button type="button"
+                            onclick="abrirModal()"
+                            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-semibold shadow-md">
+                        ➕ Adicionar Personalizado
+                    </button>
+                </div>
+
+                <div id="miniTemasList" class="space-y-4"></div>
+
+                <!-- Buttons -->
+                <div class="flex justify-between mt-8 pt-6 border-t">
+                    <a th:href="@{/objetivos/novo/etapa1}"
+                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                        ← Voltar
+                    </a>
+                    <button type="button"
+                            onclick="salvarMiniTemas()"
+                            class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg font-semibold">
+                        Próxima Etapa →
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal para Adicionar Tema Personalizado -->
+    <div id="modalTemaPersonalizado" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">Adicionar Tema Personalizado</h3>
+                <button onclick="fecharModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    ×
+                </button>
+            </div>
+
+            <form id="formTemaPersonalizado" class="space-y-4">
+                <!-- Nome -->
+                <div>
+                    <label for="nomeTema" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nome do Mini-Tema <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           id="nomeTema"
+                           required
+                           maxlength="150"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Ex: Fundamentos de Spring Boot">
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <label for="descricaoTema" class="block text-sm font-medium text-gray-700 mb-2">
+                        Descrição <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="descricaoTema"
+                              required
+                              maxlength="300"
+                              rows="3"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              placeholder="Breve descrição do que será estudado"></textarea>
+                </div>
+
+                <!-- Horas Estimadas -->
+                <div>
+                    <label for="horasTema" class="block text-sm font-medium text-gray-700 mb-2">
+                        Horas Estimadas <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number"
+                           id="horasTema"
+                           required
+                           min="1"
+                           max="100"
+                           value="5"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="5">
+                    <p class="text-xs text-gray-500 mt-1">Entre 1 e 100 horas</p>
+                </div>
+
+                <!-- Botões -->
+                <div class="flex space-x-3 pt-4">
+                    <button type="button"
+                            onclick="fecharModal()"
+                            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-md font-semibold">
+                        Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const objetivoId = /*[[${objetivo.id}]]*/ 0;
+        let miniTemas = [];
+
+        // Carregar sugestões ao carregar a página
+        window.addEventListener('DOMContentLoaded', function() {
+            carregarSugestoes();
+        });
+
+        async function carregarSugestoes() {
+            console.log('Carregando sugestões da IA para objetivo:', objetivoId);
+
+            try {
+                const response = await fetch(`/objetivos/${objetivoId}/sugerir-temas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const sugestoes = await response.json();
+                console.log('Sugestões recebidas:', sugestoes);
+
+                miniTemas = sugestoes;
+
+                // Esconder loading e mostrar lista
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('miniTemasContainer').classList.remove('hidden');
+
+                renderizarMiniTemas();
+
+            } catch (error) {
+                console.error('Erro ao carregar sugestões:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="text-6xl mb-4">⚠️</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                        Erro ao carregar sugestões da IA
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Não foi possível conectar com a IA Gemini. Você pode adicionar temas manualmente.
+                    </p>
+                    <p class="text-sm text-red-600 mb-4">
+                        Erro: ${error.message}
+                    </p>
+                    <button onclick="continuarSemIA()"
+                            class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                        Continuar Manualmente
+                    </button>
+                `;
+            }
+        }
+
+        function continuarSemIA() {
+            miniTemas = [];
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('miniTemasContainer').classList.remove('hidden');
+            renderizarMiniTemas();
+        }
+
+        function renderizarMiniTemas() {
+            const lista = document.getElementById('miniTemasList');
+            lista.innerHTML = '';
+
+            if (miniTemas.length === 0) {
+                lista.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <p class="mb-4">Nenhum tema adicionado ainda.</p>
+                        <button onclick="abrirModal()"
+                                class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
+                            ➕ Adicionar Primeiro Tema
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            miniTemas.forEach((tema, index) => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 rounded-lg p-4 border-2 transition hover:border-blue-300';
+                div.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox"
+                               ${tema.selecionado ? 'checked' : ''}
+                               onchange="toggleSelecionado(${index})"
+                               class="w-5 h-5 text-blue-600 rounded mt-1 focus:ring-blue-500">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold text-gray-900">${tema.nome}</h3>
+                                <div class="flex items-center space-x-2">
+                                    ${tema.sugeridoPorIA ? '<span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">🤖 IA</span>' : '<span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">✏️ Manual</span>'}
+                                    <span class="text-sm font-medium text-blue-600">${tema.horasEstimadas}h</span>
+                                    <button type="button"
+                                            onclick="removerTema(${index})"
+                                            class="text-red-600 hover:text-red-800">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">${tema.descricao}</p>
+                        </div>
+                    </div>
+                `;
+                lista.appendChild(div);
+            });
+        }
+
+        function toggleSelecionado(index) {
+            miniTemas[index].selecionado = !miniTemas[index].selecionado;
+        }
+
+        function removerTema(index) {
+            if (confirm('Deseja realmente remover este tema?')) {
+                miniTemas.splice(index, 1);
+                renderizarMiniTemas();
+            }
+        }
+
+        // Funções do Modal
+        function abrirModal() {
+            document.getElementById('modalTemaPersonalizado').classList.remove('hidden');
+            document.getElementById('nomeTema').focus();
+        }
+
+        function fecharModal() {
+            document.getElementById('modalTemaPersonalizado').classList.add('hidden');
+            document.getElementById('formTemaPersonalizado').reset();
+        }
+
+        // Submit do formulário do modal
+        document.getElementById('formTemaPersonalizado').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nomeTema').value.trim();
+            const descricao = document.getElementById('descricaoTema').value.trim();
+            const horas = parseInt(document.getElementById('horasTema').value);
+
+            if (!nome || !descricao || !horas) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            miniTemas.push({
+                nome: nome,
+                descricao: descricao,
+                horasEstimadas: horas,
+                selecionado: true,
+                sugeridoPorIA: false
+            });
+
+            renderizarMiniTemas();
+            fecharModal();
+        });
+
+        // Fechar modal ao clicar fora
+        document.getElementById('modalTemaPersonalizado').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Fechar modal com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                fecharModal();
+            }
+        });
+
+        async function salvarMiniTemas() {
+            const selecionados = miniTemas.filter(t => t.selecionado);
+
+            if (selecionados.length === 0) {
+                alert('Selecione pelo menos um mini-tema!');
+                return;
+            }
+
+            console.log('Salvando mini-temas:', miniTemas);
+
+            try {
+                const response = await fetch(`/objetivos/novo/etapa2/${objetivoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(miniTemas)
+                });
+
+                console.log('Response status:', response.status);
+
+                if (response.ok) {
+                    window.location.href = `/objetivos/novo/etapa3/${objetivoId}`;
+                } else {
+                    const errorText = await response.text();
+                    console.error('Erro ao salvar:', errorText);
+                    alert('Erro ao salvar mini-temas');
+                }
+
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar mini-temas: ' + error.message);
+            }
+        }
+    </script>
+
+</body>
+</html>

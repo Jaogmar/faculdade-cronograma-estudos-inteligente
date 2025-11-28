@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Planner de Estudos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/dashboard" class="text-2xl font-bold text-blue-600">
+                    📚 Planner de Estudos
+                </a>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" th:text="'Olá, ' + ${usuario.nome}"></span>
+                    <a href="/calendario" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                        Calendário
+                    </a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                                class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                            Sair
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- Mensagem de Sucesso -->
+        <div th:if="${mensagemSucesso}" class="mb-6 bg-green-50 border-l-4 border-green-500 rounded-lg p-4">
+            <div class="flex items-center">
+                <span class="text-2xl mr-3">✅</span>
+                <p class="text-green-700 font-semibold" th:text="${mensagemSucesso}"></p>
+            </div>
+        </div>
+
+        <!-- Mensagem de Erro -->
+        <div th:if="${mensagemErro}" class="mb-6 bg-red-50 border-l-4 border-red-500 rounded-lg p-4">
+            <div class="flex items-center">
+                <span class="text-2xl mr-3">❌</span>
+                <p class="text-red-700 font-semibold" th:text="${mensagemErro}"></p>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Dashboard
+            </h1>
+            <p class="text-gray-600">Gerencie seus objetivos de estudo</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <!-- Total Objetivos -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total de Objetivos</p>
+                        <p class="text-3xl font-bold text-gray-900" th:text="${totalObjetivos}">0</p>
+                    </div>
+                    <div class="text-4xl">🎯</div>
+                </div>
+            </div>
+
+            <!-- Tarefas Hoje -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Tarefas Hoje</p>
+                        <p class="text-3xl font-bold text-blue-600" th:text="${#lists.size(tarefasHoje)}">0</p>
+                    </div>
+                    <div class="text-4xl">📅</div>
+                </div>
+            </div>
+
+            <!-- Tarefas Atrasadas -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Tarefas Atrasadas</p>
+                        <p class="text-3xl font-bold text-orange-600" th:text="${#lists.size(tarefasAtrasadas)}">0</p>
+                    </div>
+                    <div class="text-4xl">⚠️</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Novo Objetivo Button -->
+        <div class="mb-8">
+            <a href="/objetivos/novo/etapa1"
+               class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
+                ➕ Criar Novo Objetivo
+            </a>
+        </div>
+
+        <!-- Tarefas Atrasadas (se houver) -->
+        <div th:if="${!#lists.isEmpty(tarefasAtrasadas)}" class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">⚠️ Tarefas Atrasadas</h2>
+            <div class="bg-orange-50 border-l-4 border-orange-500 rounded-lg p-4">
+                <div class="space-y-3">
+                    <div th:each="tarefa : ${tarefasAtrasadas}"
+                         class="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm">
+                        <div>
+                            <p class="font-semibold text-gray-900" th:text="${tarefa.titulo}"></p>
+                            <p class="text-sm text-gray-600">
+                                Agendada para: <span th:text="${#temporals.format(tarefa.dataAgendada, 'dd/MM/yyyy')}"></span>
+                            </p>
+                        </div>
+                        <span class="text-orange-600 font-semibold">Em Atraso</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarefas de Hoje -->
+        <div th:if="${!#lists.isEmpty(tarefasHoje)}" class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">📅 Tarefas de Hoje</h2>
+            <div class="space-y-3">
+                <div th:each="tarefa : ${tarefasHoje}"
+                     class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox"
+                                   th:checked="${tarefa.concluida}"
+                                   th:data-tarefa-id="${tarefa.id}"
+                                   class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                                   onclick="toggleTarefa(this)">
+                            <div>
+                                <p class="font-semibold text-gray-900" th:text="${tarefa.titulo}"></p>
+                                <p class="text-sm text-gray-600" th:text="${tarefa.duracao} + ' minutos'"></p>
+                            </div>
+                        </div>
+                        <span th:if="${tarefa.concluida}"
+                              class="text-green-600 font-semibold">✓ Concluída</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Objetivos -->
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Seus Objetivos</h2>
+
+            <!-- Se não há objetivos -->
+            <div th:if="${#lists.isEmpty(objetivos)}"
+                 class="bg-white rounded-xl shadow-md p-12 text-center">
+                <div class="text-6xl mb-4">📚</div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    Nenhum objetivo criado ainda
+                </h3>
+                <p class="text-gray-600 mb-6">
+                    Comece criando seu primeiro objetivo de estudo!
+                </p>
+                <a href="/objetivos/novo/etapa1"
+                   class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                    Criar Primeiro Objetivo
+                </a>
+            </div>
+
+            <!-- Grid de Objetivos -->
+            <div th:if="${!#lists.isEmpty(objetivos)}" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div th:each="objetivo : ${objetivos}"
+                     class="bg-white rounded-xl shadow-md hover:shadow-xl transition p-6">
+
+                    <!-- Status Badge -->
+                    <div class="mb-4">
+                        <span th:if="${objetivo.status.name() == 'RASCUNHO'}"
+                              class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            📝 Rascunho
+                        </span>
+                        <span th:if="${objetivo.status.name() == 'EM_ANDAMENTO'}"
+                              class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            🚀 Em Andamento
+                        </span>
+                        <span th:if="${objetivo.status.name() == 'CONCLUIDO'}"
+                              class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            ✅ Concluído
+                        </span>
+                    </div>
+
+                    <!-- Título -->
+                    <h3 class="text-xl font-bold text-gray-900 mb-2" th:text="${objetivo.temaPrincipal}"></h3>
+
+                    <!-- Data Limite -->
+                    <p class="text-gray-600 mb-4">
+                        📅 Até: <span th:text="${#temporals.format(objetivo.dataLimite, 'dd/MM/yyyy')}"></span>
+                    </p>
+
+                    <!-- Rotina (se definida) -->
+                    <p th:if="${objetivo.horasPorDia != null}" class="text-sm text-gray-500 mb-4">
+                        ⏱️ <span th:text="${objetivo.horasPorDia} + 'h/dia'"></span>
+                    </p>
+
+                    <!-- Botões de Ação -->
+                    <div class="flex space-x-2">
+                        <a th:href="@{/objetivos/{id}(id=${objetivo.id})}"
+                           class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-700 transition text-sm font-semibold">
+                            Ver Detalhes
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleTarefa(checkbox) {
+            const tarefaId = checkbox.dataset.tarefaId;
+            const concluida = checkbox.checked;
+
+            fetch(`/tarefas/${tarefaId}/concluir`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Erro ao atualizar tarefa');
+                    checkbox.checked = !concluida;
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao atualizar tarefa');
+                checkbox.checked = !concluida;
+            });
+        }
+    </script>
+
+</body>
+</html>
