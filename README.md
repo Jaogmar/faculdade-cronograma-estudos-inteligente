@@ -152,4 +152,106 @@ A aplicação estará disponível em: **http://localhost:8080**
 - Checkbox para marcar como concluída
 - Indicador visual de tarefas em atraso
 
+## 🔧 Estrutura do Projeto
 
+```
+src/main/java/com/estudos/planner/
+├── config/              # Configurações (Security, etc)
+├── controller/          # Controllers MVC
+├── dto/                 # Data Transfer Objects
+├── model/               # Entidades JPA
+├── repository/          # Repositories Spring Data
+└── service/             # Lógica de negócio
+    ├── GeminiService.java           # Integração com IA
+    ├── CronogramaService.java       # Algoritmo inteligente
+    ├── ObjetivoService.java         # Gestão de objetivos
+    └── TarefaService.java           # Gestão de tarefas
+
+src/main/resources/
+├── templates/           # Templates Thymeleaf
+│   ├── objetivo/        # Wizard de 4 etapas
+│   ├── dashboard.html
+│   ├── login.html
+│   └── cadastro.html
+└── static/              # CSS, JS, imagens
+```
+
+## 🐛 Troubleshooting
+
+### ❌ Erro: "models/gemini-pro is not found"
+
+**Causa:** O Google atualizou os modelos disponíveis.
+
+**Solução:**
+- A URL correta agora é: `gemini-1.5-flash` (já corrigido no projeto)
+- Se o erro persistir, verifique se sua API Key está ativa
+
+### ❌ Erro: "IA Gemini não está respondendo"
+
+**Possíveis causas:**
+1. API Key inválida ou não configurada
+2. Quota da API Gemini excedida
+3. Sem conexão com a internet
+4. Modelo desatualizado (use `gemini-1.5-flash`)
+
+**Solução:**
+- Verifique a API Key no `application.properties`
+- Certifique-se de usar: `gemini-1.5-flash:generateContent`
+- Teste a chave em: https://aistudio.google.com/app/apikey
+- Use a opção "Continuar Manualmente" para adicionar temas
+
+### ❌ Erro: "Access denied for user 'root'@'localhost'"
+
+**Solução:**
+- Verifique as credenciais do MySQL no `application.properties`
+- Teste a conexão: `mysql -u root -proot`
+
+### ❌ Erro: "Table 'planner_estudos.usuarios' doesn't exist"
+
+**Solução:**
+- O banco será criado automaticamente na primeira execução
+- Aguarde o Spring Boot iniciar completamente
+- Verifique os logs: `spring.jpa.hibernate.ddl-auto=update`
+
+## 📝 Notas de Desenvolvimento
+
+- **CSRF**: Desabilitado para simplificar requisições AJAX (habilite em produção)
+- **Logs**: Nível DEBUG ativo para desenvolvimento
+- **Hot Reload**: DevTools ativado (ctrl+F9 no IntelliJ)
+
+## 🎨 Personalização
+
+### Alterar Cores do Tailwind
+
+Edite o arquivo de templates para customizar:
+
+```javascript
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                primary: '#3B82F6',  // Altere aqui
+                secondary: '#8B5CF6',
+            }
+        }
+    }
+}
+```
+
+### Ajustar Algoritmo de Distribuição
+
+Edite `CronogramaService.java` método `dividirEmSessoes()` para alterar:
+- Percentuais: Fundamentos (40%), Aprofundamento (40%), Revisão (20%)
+- Duração das sessões (1-2h)
+
+## 📄 Licença
+
+Projeto educacional - Livre para uso e modificação
+
+## 👨‍💻 Autor
+
+Sistema desenvolvido com Spring Boot e Google Gemini IA
+
+---
+
+**Dúvidas?** Abra uma issue no repositório!

@@ -21,9 +21,6 @@ public class CronogramaService {
 
     private final TarefaRepository tarefaRepository;
 
-    /**
-     * Calcula o número de dias úteis entre duas datas, considerando apenas os dias da semana permitidos
-     */
     public int calcularDiasUteis(LocalDate inicio, LocalDate fim, List<DayOfWeek> diasPermitidos) {
         int dias = 0;
         LocalDate atual = inicio;
@@ -38,26 +35,23 @@ public class CronogramaService {
         return dias;
     }
 
-    /**
-     * Verifica se o objetivo é viável com a rotina definida
-     */
     public Map<String, Object> verificarViabilidade(Objetivo objetivo) {
         Map<String, Object> resultado = new HashMap<>();
 
-        // Parsear dias da semana
+        
         List<DayOfWeek> diasPermitidos = parsearDiasEstudo(objetivo.getDiasEstudo());
 
-        // Calcular horas necessárias
+        
         int horasNecessarias = objetivo.getMiniTemas().stream()
                 .filter(mt -> !mt.getRemovido())
                 .mapToInt(MiniTema::getCargaHorariaEstimada)
                 .sum();
 
-        // Calcular dias úteis
+        
         LocalDate hoje = LocalDate.now();
         int diasUteis = calcularDiasUteis(hoje, objetivo.getDataLimite(), diasPermitidos);
 
-        // Calcular horas disponíveis
+        
         int horasDisponiveis = diasUteis * objetivo.getHorasPorDia();
 
         boolean viavel = horasDisponiveis >= horasNecessarias;
@@ -71,7 +65,7 @@ public class CronogramaService {
             int horasFaltando = horasNecessarias - horasDisponiveis;
             resultado.put("horasFaltando", horasFaltando);
 
-            // Sugerir temas para remoção (começando pelos maiores)
+            
             List<MiniTema> temasOrdenados = objetivo.getMiniTemas().stream()
                     .filter(mt -> !mt.getRemovido())
                     .sorted(Comparator.comparingInt(MiniTema::getCargaHorariaEstimada).reversed())
@@ -94,27 +88,24 @@ public class CronogramaService {
         return resultado;
     }
 
-    /**
-     * Distribui a carga horária de forma inteligente criando tarefas
-     */
     @Transactional
     public void distribuirCargaHoraria(Objetivo objetivo) {
         log.info("Distribuindo carga horária para objetivo {}", objetivo.getId());
 
-        // Limpar tarefas existentes
+        
         List<Tarefa> tarefasExistentes = tarefaRepository.findByObjetivoOrderByDataAgendadaAsc(objetivo);
         tarefaRepository.deleteAll(tarefasExistentes);
 
-        // Parsear dias da semana
+        
         List<DayOfWeek> diasPermitidos = parsearDiasEstudo(objetivo.getDiasEstudo());
 
-        // Ordenar mini-temas por complexidade (horas como proxy)
+        
         List<MiniTema> miniTemasOrdenados = objetivo.getMiniTemas().stream()
                 .filter(mt -> !mt.getRemovido())
                 .sorted(Comparator.comparingInt(MiniTema::getCargaHorariaEstimada).reversed())
                 .collect(Collectors.toList());
 
-        // Gerar lista de datas disponíveis
+        
         List<LocalDate> datasDisponiveis = gerarDatasDisponiveis(
                 LocalDate.now().plusDays(1),
                 objetivo.getDataLimite(),
@@ -125,20 +116,20 @@ public class CronogramaService {
             throw new RuntimeException("Nenhuma data disponível para agendar tarefas");
         }
 
-        // Distribuir tarefas
+        
         int indiceDia = 0;
         int horasUsadasNoDia = 0;
 
         for (MiniTema miniTema : miniTemasOrdenados) {
             int cargaTotal = miniTema.getCargaHorariaEstimada();
 
-            // Dividir em sessões de 1-2h conforme princípio inteligente
+            
             List<SessaoEstudo> sessoes = dividirEmSessoes(miniTema, cargaTotal);
 
             for (SessaoEstudo sessao : sessoes) {
-                // Verificar se ainda cabe no dia atual
+                
                 if (horasUsadasNoDia + sessao.duracao > objetivo.getHorasPorDia()) {
-                    // Avançar para próximo dia
+                    
                     indiceDia++;
                     horasUsadasNoDia = 0;
 
@@ -149,12 +140,12 @@ public class CronogramaService {
                     }
                 }
 
-                // Criar tarefa
+                
                 Tarefa tarefa = new Tarefa();
                 tarefa.setObjetivo(objetivo);
                 tarefa.setMiniTema(miniTema);
                 tarefa.setDataAgendada(datasDisponiveis.get(indiceDia));
-                tarefa.setDuracao(sessao.duracao * 60); // converter para minutos
+                tarefa.setDuracao(sessao.duracao * 60);
                 tarefa.setTitulo(sessao.titulo);
                 tarefa.setDescricao(sessao.descricao);
                 tarefa.setConcluida(false);
@@ -169,13 +160,10 @@ public class CronogramaService {
                 tarefaRepository.findByObjetivoOrderByDataAgendadaAsc(objetivo).size());
     }
 
-    /**
-     * Divide um mini-tema em sessões de estudo seguindo princípios inteligentes
-     */
     private List<SessaoEstudo> dividirEmSessoes(MiniTema miniTema, int cargaTotal) {
         List<SessaoEstudo> sessoes = new ArrayList<>();
 
-        // Fundamentos (40% da carga)
+        
         int horasFundamentos = (int) Math.ceil(cargaTotal * 0.4);
         if (horasFundamentos > 0) {
             int numSessoesFund = (int) Math.ceil(horasFundamentos / 2.0);
@@ -190,7 +178,7 @@ public class CronogramaService {
             }
         }
 
-        // Aprofundamento (40% da carga)
+        
         int horasAprofundamento = (int) Math.ceil(cargaTotal * 0.4);
         if (horasAprofundamento > 0) {
             int numSessoesAprof = (int) Math.ceil(horasAprofundamento / 2.0);
@@ -205,7 +193,7 @@ public class CronogramaService {
             }
         }
 
-        // Revisão (20% da carga)
+        
         int horasRevisao = cargaTotal - horasFundamentos - horasAprofundamento;
         if (horasRevisao > 0) {
             sessoes.add(new SessaoEstudo(
@@ -218,9 +206,6 @@ public class CronogramaService {
         return sessoes;
     }
 
-    /**
-     * Gera lista de datas disponíveis para estudo
-     */
     private List<LocalDate> gerarDatasDisponiveis(LocalDate inicio, LocalDate fim, List<DayOfWeek> diasPermitidos) {
         List<LocalDate> datas = new ArrayList<>();
         LocalDate atual = inicio;
@@ -235,9 +220,6 @@ public class CronogramaService {
         return datas;
     }
 
-    /**
-     * Parseia string de dias (ex: "SEG,QUA,SEX") para lista de DayOfWeek
-     */
     private List<DayOfWeek> parsearDiasEstudo(String diasEstudo) {
         List<DayOfWeek> dias = new ArrayList<>();
 
@@ -266,13 +248,10 @@ public class CronogramaService {
         return dias;
     }
 
-    /**
-     * Classe auxiliar para representar uma sessão de estudo
-     */
     private static class SessaoEstudo {
         String titulo;
         String descricao;
-        int duracao; // em horas
+        int duracao;
 
         public SessaoEstudo(String titulo, String descricao, int duracao) {
             this.titulo = titulo;

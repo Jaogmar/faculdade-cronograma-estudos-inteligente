@@ -31,7 +31,7 @@ public class ObjetivoController {
     private final GeminiService geminiService;
     private final CronogramaService cronogramaService;
 
-    // ========== ETAPA 1: Tema + Data Limite ==========
+    
 
     @GetMapping("/novo/etapa1")
     public String etapa1Form() {
@@ -45,8 +45,7 @@ public class ObjetivoController {
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
 
-        try {
-            // Validações
+            try {
             if (temaPrincipal == null || temaPrincipal.trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("erro", "Tema principal é obrigatório");
                 return "redirect:/objetivos/novo/etapa1";
@@ -57,12 +56,12 @@ public class ObjetivoController {
                 return "redirect:/objetivos/novo/etapa1";
             }
 
-            // Buscar usuário
+            
             String email = authentication.getName();
             Usuario usuario = usuarioService.buscarPorEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-            // Criar rascunho
+            
             Objetivo objetivo = objetivoService.criarRascunho(usuario, temaPrincipal, dataLimite);
 
             log.info("Objetivo {} criado na etapa 1", objetivo.getId());
@@ -76,7 +75,7 @@ public class ObjetivoController {
         }
     }
 
-    // ========== ETAPA 2: Sugestões da IA ==========
+    
 
     @GetMapping("/novo/etapa2/{id}")
     public String etapa2Form(@PathVariable Long id, Model model) {
@@ -88,16 +87,15 @@ public class ObjetivoController {
     @PostMapping("/{id}/sugerir-temas")
     @ResponseBody
     public ResponseEntity<List<MiniTemaDTO>> sugerirTemas(@PathVariable Long id) {
-        try {
+            try {
             Objetivo objetivo = objetivoService.buscarPorId(id);
             List<MiniTemaDTO> sugestoes = geminiService.sugerirMiniTemas(objetivo.getTemaPrincipal());
 
             log.info("Retornando {} sugestões para objetivo {}", sugestoes.size(), id);
 
             return ResponseEntity.ok(sugestoes);
-        } catch (Exception e) {
+            } catch (Exception e) {
             log.error("Erro ao buscar sugestões", e);
-            // Retornar lista vazia para permitir entrada manual
             return ResponseEntity.ok(new ArrayList<>());
         }
     }
@@ -109,7 +107,7 @@ public class ObjetivoController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Filtrar apenas selecionados
+            
             List<MiniTemaDTO> selecionados = miniTemas.stream()
                     .filter(MiniTemaDTO::getSelecionado)
                     .collect(Collectors.toList());
@@ -132,13 +130,11 @@ public class ObjetivoController {
         }
     }
 
-    // ========== ETAPA 3: Carga Horária ==========
+    
 
     @GetMapping("/novo/etapa3/{id}")
     public String etapa3Form(@PathVariable Long id, Model model) {
         Objetivo objetivo = objetivoService.buscarPorId(id);
-
-        // Calcular total de horas
         int totalHoras = objetivoService.calcularHorasTotaisNecessarias(objetivo);
 
         model.addAttribute("objetivo", objetivo);
@@ -169,7 +165,7 @@ public class ObjetivoController {
         }
     }
 
-    // ========== ETAPA 4: Rotina + Validação ==========
+    
 
     @GetMapping("/novo/etapa4/{id}")
     public String etapa4Form(@PathVariable Long id, Model model) {
@@ -189,8 +185,7 @@ public class ObjetivoController {
             @RequestParam Integer horasPorDia,
             @RequestParam String diasEstudo) {
 
-        try {
-            // Atualizar rotina temporariamente para validação
+            try {
             objetivoService.configurarRotina(id, horasPorDia, diasEstudo);
 
             Objetivo objetivo = objetivoService.buscarPorId(id);
@@ -198,7 +193,7 @@ public class ObjetivoController {
 
             return ResponseEntity.ok(resultado);
 
-        } catch (Exception e) {
+            } catch (Exception e) {
             log.error("Erro ao validar viabilidade", e);
             return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
         }
@@ -212,10 +207,10 @@ public class ObjetivoController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Configurar rotina
+            
             objetivoService.configurarRotina(id, horasPorDia, diasEstudo);
 
-            // Validar viabilidade
+            
             Objetivo objetivo = objetivoService.buscarPorId(id);
             Map<String, Object> viabilidade = cronogramaService.verificarViabilidade(objetivo);
 
@@ -225,10 +220,10 @@ public class ObjetivoController {
                 return "redirect:/objetivos/novo/etapa4/" + id;
             }
 
-            // Gerar cronograma
+            
             cronogramaService.distribuirCargaHoraria(objetivo);
 
-            // Finalizar objetivo
+            
             objetivoService.finalizarObjetivo(id);
 
             log.info("Objetivo {} finalizado com sucesso", id);
@@ -245,7 +240,7 @@ public class ObjetivoController {
         }
     }
 
-    // ========== Visualização de Objetivo ==========
+    
 
     @GetMapping("/{id}")
     public String verDetalhes(@PathVariable Long id, Model model) {

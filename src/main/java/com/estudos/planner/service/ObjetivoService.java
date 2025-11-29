@@ -43,10 +43,9 @@ public class ObjetivoService {
         Objetivo objetivo = objetivoRepository.findById(objetivoId)
                 .orElseThrow(() -> new RuntimeException("Objetivo não encontrado"));
 
-        // Remover mini-temas existentes
         objetivo.getMiniTemas().clear();
 
-        // Adicionar novos mini-temas
+        
         int ordem = 1;
         for (MiniTemaDTO dto : miniTemasDTO) {
             if (dto.getSelecionado()) {
@@ -146,13 +145,13 @@ public class ObjetivoService {
         Objetivo objetivo = objetivoRepository.findById(objetivoId)
                 .orElseThrow(() -> new RuntimeException("Objetivo não encontrado: " + objetivoId));
 
-        // Excluir todas as tarefas associadas
+        tarefaRepository.deleteAll(objetivo.getTarefas());
         tarefaRepository.deleteAll(objetivo.getTarefas());
 
-        // Excluir todos os mini-temas associados
+        miniTemaRepository.deleteAll(objetivo.getMiniTemas());
         miniTemaRepository.deleteAll(objetivo.getMiniTemas());
 
-        // Excluir o objetivo
+        objetivoRepository.delete(objetivo);
         objetivoRepository.delete(objetivo);
 
         log.info("Objetivo {} excluído com sucesso", objetivoId);

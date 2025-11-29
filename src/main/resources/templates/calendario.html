@@ -6,15 +6,15 @@
     <title>Calendário - Planner de Estudos</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- FullCalendar CSS -->
+    
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
 
-    <!-- FullCalendar JS -->
+    
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/pt-br.global.min.js'></script>
 
     <style>
-        /* Customizações do FullCalendar */
+        
         .fc {
             background: white;
             border-radius: 1rem;
@@ -74,7 +74,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Header -->
+    
     <header class="bg-white shadow-sm">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -96,10 +96,10 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
+    
     <main class="container mx-auto px-4 py-8">
 
-        <!-- Header -->
+        
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Calendário de Estudos</h1>
@@ -111,7 +111,7 @@
             </a>
         </div>
 
-        <!-- Legenda -->
+        
         <div class="bg-white rounded-xl shadow-md p-4 mb-6">
             <div class="flex items-center space-x-6">
                 <span class="text-sm font-semibold text-gray-700">Legenda:</span>
@@ -130,14 +130,14 @@
             </div>
         </div>
 
-        <!-- Calendário -->
+        
         <div class="shadow-2xl rounded-2xl overflow-hidden">
             <div id="calendar"></div>
         </div>
 
     </main>
 
-    <!-- Modal de Detalhes da Tarefa -->
+    
     <div id="modalTarefa" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4">
             <div class="flex justify-between items-start mb-6">
@@ -150,10 +150,10 @@
                 </button>
             </div>
 
-            <!-- Status Badge -->
+            
             <div id="modalStatus" class="mb-4"></div>
 
-            <!-- Informações -->
+            
             <div class="space-y-3 mb-6">
                 <div class="flex items-center space-x-2">
                     <span class="text-gray-600">📚</span>
@@ -169,13 +169,13 @@
                 </div>
             </div>
 
-            <!-- Descrição -->
+            
             <div id="modalDescricaoContainer" class="mb-6 hidden">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Descrição:</label>
                 <p id="modalDescricao" class="text-gray-600 bg-gray-50 p-3 rounded-lg"></p>
             </div>
 
-            <!-- Checkbox para Concluir -->
+            
             <div id="modalCheckboxContainer" class="mb-6">
                 <label class="flex items-center space-x-3 cursor-pointer bg-blue-50 p-4 rounded-lg hover:bg-blue-100 transition">
                     <input type="checkbox"
@@ -186,7 +186,7 @@
                 </label>
             </div>
 
-            <!-- Botões -->
+            
             <div class="flex space-x-3">
                 <button onclick="fecharModal()"
                         class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
@@ -253,14 +253,14 @@
             const props = event.extendedProps;
             tarefaSelecionada = props;
 
-            // Preencher modal
+            
             document.getElementById('modalTitulo').textContent = event.title;
             document.getElementById('modalObjetivo').textContent = 'Objetivo: ' + props.objetivoNome;
             document.getElementById('modalMiniTema').textContent = props.miniTemaNome;
             document.getElementById('modalData').textContent = formatarData(event.start);
             document.getElementById('modalDuracao').textContent = props.duracao + ' minutos';
 
-            // Descrição (se existir)
+            
             if (props.descricao && props.descricao.trim() !== '') {
                 document.getElementById('modalDescricao').textContent = props.descricao;
                 document.getElementById('modalDescricaoContainer').classList.remove('hidden');
@@ -268,7 +268,7 @@
                 document.getElementById('modalDescricaoContainer').classList.add('hidden');
             }
 
-            // Status Badge
+            
             let statusHtml = '';
             if (props.concluida) {
                 statusHtml = '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">✅ Concluída</span>';
@@ -282,10 +282,10 @@
             }
             document.getElementById('modalStatus').innerHTML = statusHtml;
 
-            // Checkbox
+            
             document.getElementById('modalCheckbox').checked = props.concluida;
 
-            // Mostrar modal
+            
             document.getElementById('modalTarefa').classList.remove('hidden');
         }
 
@@ -308,7 +308,7 @@
                 });
 
                 if (response.ok) {
-                    // Recarregar calendário
+                    
                     calendar.refetchEvents();
                     fecharModal();
                 } else {
@@ -338,14 +338,14 @@
             return new Date(data).toLocaleDateString('pt-BR', options);
         }
 
-        // Fechar modal ao clicar fora
+    
         document.getElementById('modalTarefa').addEventListener('click', function(e) {
             if (e.target === this) {
                 fecharModal();
             }
         });
 
-        // Fechar modal com ESC
+    
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 fecharModal();

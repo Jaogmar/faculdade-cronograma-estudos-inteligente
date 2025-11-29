@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Header -->
+    
     <header class="bg-white shadow-sm">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -22,10 +22,10 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
+    
     <main class="container mx-auto px-4 py-8 max-w-4xl">
 
-        <!-- Progress Bar -->
+        
         <div class="mb-8">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-medium text-blue-600">Etapa 3 de 4</span>
@@ -36,17 +36,17 @@
             </div>
         </div>
 
-        <!-- Title -->
+        
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Revisão de Carga Horária</h1>
             <p class="text-gray-600">Ajuste as horas estimadas para cada mini-tema</p>
         </div>
 
-        <!-- Form -->
+        
         <div class="bg-white rounded-xl shadow-lg p-8">
             <form th:action="@{/objetivos/novo/etapa3/{id}(id=${objetivo.id})}" method="post">
 
-                <!-- Summary Card -->
+                
                 <div class="bg-blue-50 rounded-lg p-6 mb-6">
                     <div class="text-center">
                         <p class="text-sm text-blue-600 font-medium mb-1">Total de Horas Necessárias</p>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <!-- Mini-Temas Table -->
+                
                 <div class="space-y-3 mb-8">
                     <div th:each="miniTema, iterStat : ${miniTemas}"
                          class="bg-gray-50 rounded-lg p-4">
@@ -80,7 +80,7 @@
                     </div>
                 </div>
 
-                <!-- Buttons -->
+                
                 <div class="flex justify-between pt-6 border-t">
                     <a th:href="@{/objetivos/novo/etapa2/{id}(id=${objetivo.id})}"
                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
@@ -95,7 +95,7 @@
             </form>
         </div>
 
-        <!-- Info Box -->
+        
         <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
             <div class="flex items-start">
                 <div class="text-2xl mr-3">💡</div>
@@ -123,7 +123,7 @@
             document.getElementById('totalHoras').textContent = total + 'h';
         }
 
-        // Atualizar total ao carregar a página
+        
         window.addEventListener('DOMContentLoaded', atualizarTotal);
     </script>
 

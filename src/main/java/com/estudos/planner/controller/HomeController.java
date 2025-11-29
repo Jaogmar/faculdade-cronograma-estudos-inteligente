@@ -44,25 +44,25 @@ public class HomeController {
         log.info("Tentativa de cadastro para email: {}", email);
 
         try {
-            // Validação de senha
+            
             if (!senha.equals(confirmarSenha)) {
                 model.addAttribute("erro", "As senhas não coincidem");
                 return "cadastro";
             }
 
-            // Validação de senha mínima
+            
             if (senha.length() < 6) {
                 model.addAttribute("erro", "A senha deve ter no mínimo 6 caracteres");
                 return "cadastro";
             }
 
-            // Validação de nome
+            
             if (nome == null || nome.trim().length() < 3) {
                 model.addAttribute("erro", "O nome deve ter no mínimo 3 caracteres");
                 return "cadastro";
             }
 
-            // Cadastrar usuário
+            
             usuarioService.cadastrar(nome.trim(), email.trim(), senha);
 
             log.info("Usuário cadastrado com sucesso: {}", email);

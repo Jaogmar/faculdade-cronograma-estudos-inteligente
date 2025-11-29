@@ -38,7 +38,7 @@ public class CalendarioController {
         Usuario usuario = usuarioService.buscarPorEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        // Buscar objetivos do usuário para exibir como filtros
+        
         List<Objetivo> objetivos = objetivoRepository.findByUsuarioOrderByDataCriacaoDesc(usuario);
 
         model.addAttribute("usuario", usuario);
@@ -54,13 +54,13 @@ public class CalendarioController {
         Usuario usuario = usuarioService.buscarPorEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        // Buscar todas as tarefas do usuário (últimos 6 meses + próximos 6 meses)
+        
         LocalDate inicio = LocalDate.now().minusMonths(6);
         LocalDate fim = LocalDate.now().plusMonths(6);
 
         List<Tarefa> tarefas = tarefaRepository.findByUsuarioIdAndPeriodo(usuario.getId(), inicio, fim);
 
-        // Converter para formato do FullCalendar
+        
         List<Map<String, Object>> eventos = tarefas.stream()
                 .map(this::tarefaParaEvento)
                 .collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class CalendarioController {
         evento.put("start", tarefa.getDataAgendada().toString());
         evento.put("allDay", true);
 
-        // Informações extras
+        
         evento.put("extendedProps", Map.of(
                 "tarefaId", tarefa.getId(),
                 "objetivoId", tarefa.getObjetivo().getId(),
@@ -88,17 +88,17 @@ public class CalendarioController {
                 "emAtraso", tarefa.isEmAtraso()
         ));
 
-        // Cor baseada no status
+        
         if (tarefa.getConcluida()) {
-            evento.put("backgroundColor", "#10B981"); // Verde
+            evento.put("backgroundColor", "#10B981");
             evento.put("borderColor", "#059669");
             evento.put("className", "evento-concluido");
         } else if (tarefa.isEmAtraso()) {
-            evento.put("backgroundColor", "#F59E0B"); // Laranja
+            evento.put("backgroundColor", "#F59E0B");
             evento.put("borderColor", "#D97706");
             evento.put("className", "evento-atrasado");
         } else {
-            evento.put("backgroundColor", "#3B82F6"); // Azul
+            evento.put("backgroundColor", "#3B82F6");
             evento.put("borderColor", "#2563EB");
             evento.put("className", "evento-pendente");
         }

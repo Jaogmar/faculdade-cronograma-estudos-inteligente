@@ -49,7 +49,6 @@ public class GeminiService {
 
         } catch (Exception e) {
             log.error("Erro ao chamar API Gemini", e);
-            // Fallback: retornar lista vazia para permitir entrada manual
             return new ArrayList<>();
         }
     }
@@ -80,7 +79,7 @@ public class GeminiService {
     }
 
     private String chamarGeminiAPI(String prompt) throws Exception {
-        // Construir request JSON
+        
         JsonObject requestBody = new JsonObject();
         JsonArray contents = new JsonArray();
         JsonObject content = new JsonObject();
@@ -93,7 +92,7 @@ public class GeminiService {
         contents.add(content);
         requestBody.add("contents", contents);
 
-        // Adicionar configurações de geração
+        
         JsonObject generationConfig = new JsonObject();
         generationConfig.addProperty("temperature", 0.7);
         generationConfig.addProperty("maxOutputTokens", 10048);
@@ -102,7 +101,7 @@ public class GeminiService {
         String jsonBody = gson.toJson(requestBody);
         log.debug("Request body: {}", jsonBody);
 
-        // Construir URL com API key
+        
         String urlWithKey = apiUrl + "?key=" + apiKey;
 
         RequestBody body = RequestBody.create(
@@ -125,7 +124,7 @@ public class GeminiService {
             String responseBody = response.body().string();
             log.debug("Response body: {}", responseBody);
 
-            // Parsear resposta
+            
             JsonObject responseJson = JsonParser.parseString(responseBody).getAsJsonObject();
             JsonArray candidates = responseJson.getAsJsonArray("candidates");
 
@@ -146,10 +145,10 @@ public class GeminiService {
         List<MiniTemaDTO> miniTemas = new ArrayList<>();
 
         try {
-            // Limpar a resposta removendo markdown e espaços
+            
             String jsonLimpo = respostaGemini.trim();
 
-            // Remover markdown code blocks se existirem
+            
             if (jsonLimpo.startsWith("```json")) {
                 jsonLimpo = jsonLimpo.substring(7);
             }
@@ -163,7 +162,7 @@ public class GeminiService {
 
             log.debug("JSON limpo para parsear: {}", jsonLimpo);
 
-            // Parsear JSON
+            
             JsonArray array = JsonParser.parseString(jsonLimpo).getAsJsonArray();
 
             for (int i = 0; i < array.size() && i < 10; i++) {
@@ -179,7 +178,7 @@ public class GeminiService {
                 miniTemas.add(dto);
             }
 
-            // Garantir que temos exatamente 10 sugestões
+            
             while (miniTemas.size() < 10) {
                 MiniTemaDTO dto = new MiniTemaDTO();
                 dto.setNome("Tópico " + (miniTemas.size() + 1));
@@ -192,7 +191,7 @@ public class GeminiService {
 
         } catch (Exception e) {
             log.error("Erro ao parsear resposta do Gemini", e);
-            // Retornar lista vazia em caso de erro
+            
         }
 
         return miniTemas;

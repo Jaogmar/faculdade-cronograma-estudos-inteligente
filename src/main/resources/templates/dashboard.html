@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Header -->
+    
     <header class="bg-white shadow-sm">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -31,10 +31,10 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
+    
     <main class="container mx-auto px-4 py-8">
 
-        <!-- Mensagem de Sucesso -->
+        
         <div th:if="${mensagemSucesso}" class="mb-6 bg-green-50 border-l-4 border-green-500 rounded-lg p-4">
             <div class="flex items-center">
                 <span class="text-2xl mr-3">✅</span>
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <!-- Mensagem de Erro -->
+        
         <div th:if="${mensagemErro}" class="mb-6 bg-red-50 border-l-4 border-red-500 rounded-lg p-4">
             <div class="flex items-center">
                 <span class="text-2xl mr-3">❌</span>
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <!-- Welcome Section -->
+        
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">
                 Dashboard
@@ -58,9 +58,9 @@
             <p class="text-gray-600">Gerencie seus objetivos de estudo</p>
         </div>
 
-        <!-- Stats Cards -->
+        
         <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <!-- Total Objetivos -->
+            
             <div class="bg-white rounded-xl shadow-md p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <!-- Tarefas Hoje -->
+            
             <div class="bg-white rounded-xl shadow-md p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <!-- Tarefas Atrasadas -->
+            
             <div class="bg-white rounded-xl shadow-md p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <!-- Novo Objetivo Button -->
+        
         <div class="mb-8">
             <a href="/objetivos/novo/etapa1"
                class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
@@ -102,7 +102,7 @@
             </a>
         </div>
 
-        <!-- Tarefas Atrasadas (se houver) -->
+        
         <div th:if="${!#lists.isEmpty(tarefasAtrasadas)}" class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">⚠️ Tarefas Atrasadas</h2>
             <div class="bg-orange-50 border-l-4 border-orange-500 rounded-lg p-4">
@@ -121,7 +121,7 @@
             </div>
         </div>
 
-        <!-- Tarefas de Hoje -->
+        
         <div th:if="${!#lists.isEmpty(tarefasHoje)}" class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">📅 Tarefas de Hoje</h2>
             <div class="space-y-3">
@@ -146,11 +146,11 @@
             </div>
         </div>
 
-        <!-- Lista de Objetivos -->
+        
         <div>
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Seus Objetivos</h2>
 
-            <!-- Se não há objetivos -->
+            
             <div th:if="${#lists.isEmpty(objetivos)}"
                  class="bg-white rounded-xl shadow-md p-12 text-center">
                 <div class="text-6xl mb-4">📚</div>
@@ -166,12 +166,12 @@
                 </a>
             </div>
 
-            <!-- Grid de Objetivos -->
+            
             <div th:if="${!#lists.isEmpty(objetivos)}" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div th:each="objetivo : ${objetivos}"
                      class="bg-white rounded-xl shadow-md hover:shadow-xl transition p-6">
 
-                    <!-- Status Badge -->
+                    
                     <div class="mb-4">
                         <span th:if="${objetivo.status.name() == 'RASCUNHO'}"
                               class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold">
@@ -187,20 +187,20 @@
                         </span>
                     </div>
 
-                    <!-- Título -->
+                    
                     <h3 class="text-xl font-bold text-gray-900 mb-2" th:text="${objetivo.temaPrincipal}"></h3>
 
-                    <!-- Data Limite -->
+                    
                     <p class="text-gray-600 mb-4">
                         📅 Até: <span th:text="${#temporals.format(objetivo.dataLimite, 'dd/MM/yyyy')}"></span>
                     </p>
 
-                    <!-- Rotina (se definida) -->
+                    
                     <p th:if="${objetivo.horasPorDia != null}" class="text-sm text-gray-500 mb-4">
                         ⏱️ <span th:text="${objetivo.horasPorDia} + 'h/dia'"></span>
                     </p>
 
-                    <!-- Botões de Ação -->
+                    
                     <div class="flex space-x-2">
                         <a th:href="@{/objetivos/{id}(id=${objetivo.id})}"
                            class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-700 transition text-sm font-semibold">

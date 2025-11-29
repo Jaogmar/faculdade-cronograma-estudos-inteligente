@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Header -->
+    
     <header class="bg-white shadow-sm">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -22,10 +22,10 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
+    
     <main class="container mx-auto px-4 py-8 max-w-3xl">
 
-        <!-- Progress Bar -->
+        
         <div class="mb-8">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-medium text-blue-600">Etapa 4 de 4</span>
@@ -36,22 +36,22 @@
             </div>
         </div>
 
-        <!-- Title -->
+        
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Defina sua Rotina</h1>
             <p class="text-gray-600">Configure quando e quanto você pode estudar</p>
         </div>
 
-        <!-- Error Message -->
+        
         <div th:if="${erro}" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
             <p class="font-medium" th:text="${erro}"></p>
         </div>
 
-        <!-- Form -->
+        
         <div class="bg-white rounded-xl shadow-lg p-8">
             <form th:action="@{/objetivos/novo/etapa4/{id}(id=${objetivo.id})}" method="post" id="formRotina">
 
-                <!-- Total de Horas Info -->
+                
                 <div class="bg-gray-50 rounded-lg p-4 mb-6 text-center">
                     <p class="text-sm text-gray-600 mb-1">Você precisa estudar</p>
                     <p class="text-3xl font-bold text-gray-900" th:text="${totalHoras} + ' horas'"></p>
@@ -60,7 +60,7 @@
                     </p>
                 </div>
 
-                <!-- Horas por Dia -->
+                
                 <div class="mb-6">
                     <label for="horasPorDia" class="block text-sm font-medium text-gray-700 mb-2">
                         Quantas horas por dia você pode estudar? <span class="text-red-500">*</span>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
 
-                <!-- Dias da Semana -->
+                
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-3">
                         Quais dias da semana você pode estudar? <span class="text-red-500">*</span>
@@ -118,12 +118,12 @@
                     <input type="hidden" name="diasEstudo" id="diasEstudoHidden">
                 </div>
 
-                <!-- Resultado da Validação -->
+                
                 <div id="validacaoResultado" class="mb-6 hidden">
-                    <!-- Será preenchido via JavaScript -->
+                    
                 </div>
 
-                <!-- Buttons -->
+                
                 <div class="flex justify-between pt-6 border-t">
                     <a th:href="@{/objetivos/novo/etapa3/{id}(id=${objetivo.id})}"
                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
@@ -150,10 +150,10 @@
         }
 
         function validarViabilidade() {
-            // Cancelar validação anterior se existir
+        
             clearTimeout(validacaoTimeout);
 
-            // Aguardar 500ms antes de validar (debounce)
+            
             validacaoTimeout = setTimeout(async () => {
                 const horasPorDia = document.getElementById('horasPorDia').value;
                 const checkboxes = document.querySelectorAll('.dia-checkbox:checked');
@@ -165,7 +165,7 @@
 
                 const diasSelecionados = Array.from(checkboxes).map(cb => cb.value).join(',');
 
-                // Atualizar campo hidden
+                
                 document.getElementById('diasEstudoHidden').value = diasSelecionados;
 
                 try {
@@ -229,7 +229,7 @@
             }
         }
 
-        // Validação ao submeter
+        
         document.getElementById('formRotina').addEventListener('submit', function(e) {
             const checkboxes = document.querySelectorAll('.dia-checkbox:checked');
             if (checkboxes.length === 0) {

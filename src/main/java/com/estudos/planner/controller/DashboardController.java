@@ -33,15 +33,15 @@ public class DashboardController {
         Usuario usuario = usuarioService.buscarPorEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        // Buscar objetivos do usuário
+        
         List<Objetivo> objetivos = objetivoRepository.findByUsuarioOrderByDataCriacaoDesc(usuario);
 
-        // Buscar tarefas do dia
+        
         LocalDate hoje = LocalDate.now();
         List<Tarefa> tarefasHoje = tarefaRepository.findByDataAgendadaAndObjetivo_UsuarioIdOrderByDataAgendadaAsc(
                 hoje, usuario.getId());
 
-        // Buscar tarefas atrasadas
+        
         List<Tarefa> tarefasAtrasadas = tarefaRepository.findTarefasAtrasadas(usuario.getId(), hoje);
 
         model.addAttribute("usuario", usuario);

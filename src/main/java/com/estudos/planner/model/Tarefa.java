@@ -61,10 +61,6 @@ public class Tarefa {
         }
     }
 
-    /**
-     * Calcula dinamicamente se a tarefa está em atraso
-     * Uma tarefa está em atraso quando: dataAgendada < hoje E não foi concluída
-     */
     @Transient
     public boolean isEmAtraso() {
         if (concluida) {
@@ -73,17 +69,11 @@ public class Tarefa {
         return dataAgendada.isBefore(LocalDate.now());
     }
 
-    /**
-     * Marca a tarefa como concluída
-     */
     public void concluir() {
         this.concluida = true;
         this.dataConclusao = LocalDateTime.now();
     }
 
-    /**
-     * Marca a tarefa como não concluída
-     */
     public void desmarcarConclusao() {
         this.concluida = false;
         this.dataConclusao = null;

@@ -9,7 +9,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Header -->
+    
     <header class="bg-white shadow-sm">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -28,15 +28,15 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
+    
     <main class="container mx-auto px-4 py-8">
 
-        <!-- Breadcrumb -->
+        
         <div class="mb-6">
             <a href="/dashboard" class="text-blue-600 hover:underline">← Voltar ao Dashboard</a>
         </div>
 
-        <!-- Header do Objetivo -->
+        
         <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
             <div class="flex justify-between items-start mb-4">
                 <div>
@@ -55,7 +55,7 @@
                 </span>
             </div>
 
-            <!-- Barra de Progresso -->
+            
             <div class="mb-4">
                 <div class="flex justify-between text-sm mb-2">
                     <span class="text-gray-600">Progresso Geral</span>
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <!-- Rotina -->
+            
             <div class="flex space-x-6 text-sm text-gray-600">
                 <div>
                     ⏱️ <span th:text="${objetivo.horasPorDia} + 'h/dia'"></span>
@@ -80,10 +80,10 @@
 
         <div class="grid lg:grid-cols-3 gap-6">
 
-            <!-- Coluna Principal -->
+            
             <div class="lg:col-span-2 space-y-6">
 
-                <!-- Mini-Temas -->
+                
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Mini-Temas</h2>
                     <div class="space-y-3">
@@ -107,7 +107,7 @@
                     </div>
                 </div>
 
-                <!-- Gráfico de Progresso -->
+                
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Estatísticas</h2>
                     <canvas id="progressChart" width="400" height="200"></canvas>
@@ -115,10 +115,10 @@
 
             </div>
 
-            <!-- Sidebar -->
+            
             <div class="space-y-6">
 
-                <!-- Resumo -->
+                
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Resumo</h3>
                     <div class="space-y-3">
@@ -143,7 +143,7 @@
                     </div>
                 </div>
 
-                <!-- Ações -->
+                
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Ações</h3>
                     <div class="space-y-3">
@@ -168,7 +168,7 @@
 
     </main>
 
-    <!-- Modal de Confirmação de Exclusão -->
+    
     <div id="modalExclusao" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
             <div class="text-center mb-6">
@@ -206,7 +206,7 @@
         const tarefasConcluidas = /*[[${#lists.size(objetivo.tarefas.?[concluida == true])}]]*/ 0;
         const tarefasPendentes = totalTarefas - tarefasConcluidas;
 
-        // Criar gráfico
+        
         const ctx = document.getElementById('progressChart').getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',
@@ -228,7 +228,7 @@
             }
         });
 
-        // Funções do Modal de Exclusão
+        
         function abrirModalExclusao() {
             document.getElementById('modalExclusao').classList.remove('hidden');
         }
@@ -237,14 +237,14 @@
             document.getElementById('modalExclusao').classList.add('hidden');
         }
 
-        // Fechar modal ao clicar fora
+        
         document.getElementById('modalExclusao').addEventListener('click', function(e) {
             if (e.target === this) {
                 fecharModalExclusao();
             }
         });
 
-        // Fechar modal com ESC
+        
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 fecharModalExclusao();
